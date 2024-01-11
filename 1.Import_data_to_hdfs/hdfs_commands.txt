@@ -1,0 +1,6 @@
+1. start-all.sh
+2. hdfs dfs -ls /
+3. hdfs dfs -rm -r <files> (remove files we don't need)
+4. hdfs dfs -mkdir /data (folder for .csv files)
+5. sed -i 1d <file> (remove headers of .csv files in local)
+6. hdfs dfs -put ./data/* /data (copy data without header to hdfs)

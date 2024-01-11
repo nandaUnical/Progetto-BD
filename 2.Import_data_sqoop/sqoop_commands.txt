@@ -1,0 +1,60 @@
+1.(Creating MySQL tables)
+
+mysql -u user1 -p user1
+
+create table m_test (id varchar(255),day varchar(255),store_nbr varchar(255),family varchar(255),onpromotion varchar(255));
+create table m_train (id varchar(255),day varchar(255),store_nbr varchar(255),family varchar(255),sales varchar(255),onpromotion varchar(255));
+create table m_stores (store_nbr varchar(255),city varchar(255),state varchar(255),type varchar(255),cluster varchar(255));
+create table m_oil (day varchar(255),dcoilwtico varchar(255));
+
+
+2. (Exporting data from HDFS to MySQL)
+
+sqoop export --connect jdbc:mysql://master/forecasting --username user1 --password user1 --table m_oil --export-dir /data/oil.csv --input-fields-terminated-by ','
+sqoop export --connect jdbc:mysql://master/forecasting --username user1 --password user1 --table m_stores --export-dir /data/stores.csv --input-fields-terminated-by ','
+sqoop export --connect jdbc:mysql://master/forecasting --username user1 --password user1 --table m_train --export-dir /data/train.csv --input-fields-terminated-by ','
+sqoop export --connect jdbc:mysql://master/forecasting --username user1 --password user1 --table m_test --export-dir /data/test.csv --input-fields-terminated-by ','
+
+
+3.(Importing data from MySQL to Hive)
+
+sqoop import --connect jdbc:mysql://master/forecasting --username user1 --password user1 --table m_oil --hive-import --create-hive-table --hive-table h_input.h_oil --fields-terminated-by ',' -m 1
+sqoop import --connect jdbc:mysql://master/forecasting --username user1 --password user1 --table m_stores --hive-import --create-hive-table --hive-table h_input.h_stores --fields-terminated-by ',' -m 1
+sqoop import --connect jdbc:mysql://master/forecasting --username user1 --password user1 --table m_train --hive-import --create-hive-table --hive-table h_input.h_train --fields-terminated-by ',' -m 1
+sqoop import --connect jdbc:mysql://master/forecasting --username user1 --password user1 --table m_test --hive-import --create-hive-table --hive-table h_input.h_test --fields-terminated-by ',' -m 1
+
+
+4.(data cleaning with Hive)
+
+*******************************************************************************************
+
+5.(create mysql tables to stores clean data)
+create database forecasting_clean;
+use forecasting_clean;
+
+create table m_test (id int(255),day date,store_nbr int(255),family varchar(255),onpromotion int(255));
+create table m_train (id int(255),day date,store_nbr int(255),family varchar(255),sales float(10,5),onpromotion int(255));
+create table m_stores (store_nbr int(255),city varchar(255),state varchar(255),type varchar(255),cluster int(255));
+create table m_oil (day date,dcoilwtico float(10,2));
+
+
+6. (Exporting data from Hive to MySQL)
+
+sqoop export --connect jdbc:mysql://master/forecasting_clean --username user1 --password user1 --table m_oil --export-dir /user/user1/hive-storage/bigdata.db/oil/000000_0 --input-fields-terminated-by ','
+sqoop export --connect jdbc:mysql://master/forecasting_clean --username user1 --password user1 --table m_stores --export-dir /user/user1/hive-storage/bigdata.db/stores/000000_0 --input-fields-terminated-by ','
+sqoop export --connect jdbc:mysql://master/forecasting_clean --username user1 --password user1 --table m_train --export-dir /user/user1/hive-storage/bigdata.db/train/000000_0 --input-fields-terminated-by ','
+sqoop export --connect jdbc:mysql://master/forecasting_clean --username user1 --password user1 --table m_test--export-dir /user/user1/hive-storage/bigdata.db/test/000000_0 --input-fields-terminated-by ','
+
+
+7. (Importing data from MySQL to HDFS)
+
+sqoop import --connect jdbc:mysql://master/forecasting_clean --username user1 --password user1 --table m_oil --target-dir /otro/oil --fields-terminated-by ',' -m 1
+sqoop import --connect jdbc:mysql://master/forecasting_clean --username user1 --password user1 --table m_stores --target-dir /otro/stores --fields-terminated-by ',' -m 1
+sqoop import --connect jdbc:mysql://master/forecasting_clean --username user1 --password user1 --table m_train --target-dir /otro/train --fields-terminated-by ',' -m 1
+sqoop import --connect jdbc:mysql://master/forecasting_clean --username user1 --password user1 --table m_test --target-dir /otro/test --fields-terminated-by ',' -m 1
+
+
+
+
+
+

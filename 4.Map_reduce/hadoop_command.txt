@@ -1,0 +1,2 @@
+To run in distributed mode:
+hadoop jar mapperJoin.jar com.myclass.Main /data_clean/train.csv /train_output /data_clean/stores.csv
